@@ -107,6 +107,7 @@ def generate_certificates_task(
     qr_path = os.path.join(base_dir, 'static', 'qr_code.png')
     output_directory_path = os.path.join(base_dir, output_directory)
     output_certificates_path = os.path.join(base_dir, output_directory, "certificates")
+    base_certificates_path = output_certificates_path
     output_docs_path = os.path.join(base_dir, output_directory, "docs" )
     os.makedirs(output_directory_path, exist_ok=True)
     os.makedirs(output_certificates_path, exist_ok=True)
@@ -159,6 +160,9 @@ def generate_certificates_task(
         result.save(output_filename)
 
     for index, row in df.iterrows():
+        if not pd.isna(row['Team Number']):
+            output_certificates_path = f"{base_certificates_path}/Team-{int(row['Team Number'])}/"
+            os.makedirs(output_certificates_path, exist_ok=True)   
         name = row['Name']
         fname = ' '.join(''.join((word[i].upper() if (i == 0 or (i < len(word) - 1 and word[i-1] == '.')) else char.lower()) for i, char in enumerate(word)) for word in name.split())
         code = fname.lower().replace(" ", "").replace(".", "") + code_serial + str(index + codes_start_number).zfill(4)
